@@ -1,0 +1,14 @@
+{
+    "installed": {
+        "redirect_uris": [
+            "http://localhost:8090/authorize","http://localhost:8090/oauth2callback","http://localhost:4000","http://localhost:8080/"
+        ], 
+        "token_uri": "https://accounts.google.com/o/oauth2/token", 
+        "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", 
+        "auth_uri": "https://accounts.google.com/o/oauth2/auth", 
+        "client_email": "uxamabaig235@gmail.com", 
+        "client_id": "237177390569-safje6abi55e5sdsifejtg4p76bi2o8v.apps.googleusercontent.com", 
+        "client_secret": "uhOXGCxhXY_GZk6iNDxieR2G", 
+        "client_x509_cert_url": ""
+    }
+}
