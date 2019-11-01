@@ -1,12 +1,12 @@
 #!/usr/bin/python
 
-import httplib2
-import os
-import csv
 import argparse
+import csv
+import json
 import os
 import sys
-import json
+
+import httplib2
 import requests as re
 from apiclient.discovery import build
 from apiclient.errors import HttpError
@@ -14,6 +14,7 @@ from json2html import *
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
+
 DEVELOPER_KEY = "DEVELOPER KEY HERE"
 
 # The CLIENT_SECRETS_FILE variable specifies the name of a file that contains
@@ -153,9 +154,17 @@ def youtube_search(youtube,searchItem,max_Results):
     q=searchItem,
     part="snippet",
     maxResults=max_Results
-  ).execute()
-  str_json = json2html.convert(json = search_response)
-  print(str_json)
+  ).execute()        
+  temp = json.loads(json.dumps(search_response))
+  print(temp)
+  with open('videos.csv', mode='w') as csv_file:
+          fieldnames = ['kind', 'videoId']
+          writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+          writer.writeheader()
+          for item in  temp['items']:
+            #print(item['id']['kind'])
+            #print(item['id']['videoId'])
+            writer.writerow({'kind': item['id']['kind'], 'videoId': item['id']['videoId']})
   #print(search_response)
   #videos = []
 
@@ -221,4 +230,3 @@ if __name__ == "__main__":
   print(videoStore.videosArray)
 
   """
-

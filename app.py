@@ -1,27 +1,19 @@
+from apscheduler.schedulers.background import BackgroundScheduler
+import atexit
+import csv
+import pandas
 from playlistCreator import get_authenticated_service
 from playlistCreator import youtube_search
 from playlistCreator import add_video_to_playlist
 from playlistCreator import createPlaylist
-from flask import Flask, render_template, jsonify, request
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine
-
+from flask import Flask, render_template, jsonify, request, redirect, url_for
 
 app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql://root:@localhost/youtube_playlist"
-db = SQLAlchemy(app)
-
-class Parametrs(db.Model):
-    id = db.Column(db.Integer, primary_key=True)
-    searchItem = db.Column(db.String(50), unique=False, nullable=False)
-    maxResults = db.Column(db.Integer, unique=False, nullable=False)
-    playlistTitle = db.Column(db.String(150), unique=False, nullable=False)
-    playlistDescription = db.Column(db.String(300), unique=False, nullable=False)
-    privacy = db.Column(db.String(30), unique=False, nullable=False)
 
 @app.route('/')
 def hello():
-    return render_template("index.html")
+    Message = 'hide'
+    return render_template("index.html", message = Message)
 
 @app.route('/setParameters', methods={'GET','POST'})
 def setParametrs():
@@ -31,35 +23,66 @@ def setParametrs():
         playlistTitle = request.form.get('playlistTitle')
         playlistDescription = request.form.get('playlistDescription')
         privacy = request.form.get('privacy')
-        entry = Parametrs(searchItem = searchItem, maxResults = maxResults, playlistTitle=playlistTitle,playlistDescription=playlistDescription, privacy = privacy)
-        db.session.add(entry)
-        db.session.commit()
+        front_video_id = request.form.get('front_video_id')        
+        with open('parameters.csv', mode='w') as csv_file:
+            fieldnames = ['searchItem', 'maxResults', 'playlistTitle', 'playlistDescription', 'playlistPrivacy', 'front_video_id']
+            writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+            writer.writeheader()
+            writer.writerow({'searchItem': searchItem, 'maxResults': maxResults, 'playlistTitle': playlistTitle, 'playlistDescription': playlistDescription, 'playlistPrivacy': privacy, 'front_video_id': front_video_id})        
     print("Set Parametrs!")
-    return ""
+    Message = 'show'
+    return render_template("index.html", message = Message)
 
 
 @app.route('/createPlaylist')
 def create_Playlist():
     print("Create Playlist!")
+    df = pandas.read_csv('parameters.csv')
     youtube = get_authenticated_service()
-    playListID = createPlaylist(youtube,'Hello Playlist','Newer Description Test','private')
-    print(playListID)
+    playListID = createPlaylist(youtube,df['playlistTitle'][0],df['playlistDescription'][0],df['playlistPrivacy'][0])
+    with open('playlist.csv', mode='w') as csv_file:
+        fieldnames = ['playlistId']
+        writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+        writer.writeheader()
+        writer.writerow({'playlistId': playListID})        
+    #print(playListID)
+    addVideo()
     return ""
 
 @app.route('/addVideo')
 def addVideo():
     print("Add Video!")
+    df = pandas.read_csv('videos.csv')
+    dw = pandas.read_csv('playlist.csv')
+    dp = pandas.read_csv('parameters.csv')
     youtube = get_authenticated_service()
-    add_video_to_playlist(youtube,'dUj2XBiQ9Gc','PL_USY7oz1yS9u1dALUZmcaYCgMG4ez1fM')
+    add_video_to_playlist(youtube,dp['front_video_id'][0],dw['playlistId'][0])    
+    for video in df['videoId']:
+        add_video_to_playlist(youtube,video,dw['playlistId'][0])
     return ""
 
 @app.route('/searchVideos')
 def searchVideos():
-    print('searchVideos')
+    #print('searchVideos')
+    df = pandas.read_csv('parameters.csv')
     youtube = get_authenticated_service()
-    youtube_search(youtube,'iPad',10)
+    youtube_search(youtube,df['searchItem'][0],df['maxResults'][0])
+    create_Playlist()
     return ""
 
+
+def automation():
+    searchVideos()
+    create_Playlist()
+    addVideo()
+    return ""
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(func=searchVideos, trigger='cron', hour='22', minute='22')
+scheduler.start()
+
+atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
     app.run(debug=True)
