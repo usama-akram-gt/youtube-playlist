@@ -10,3 +10,4 @@ apiclient==1.0.4
 requests==2.22.0
 httplib2==0.14.0
 gunicorn==19.0.0
+google-api-python-client==1.7.11
