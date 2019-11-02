@@ -8,9 +8,9 @@ import sys
 
 import httplib2
 import requests as re
-from apiclient.discovery import build
-from apiclient.errors import HttpError
-from json2html import *
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+#from json2html import *
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
@@ -94,8 +94,8 @@ class Authenticator():
   def acceptedConfirmation(self):
     accepted = 'n'
     while accepted.lower() == 'n':
-      accepted = raw_input("Have you authorized me? (y/n)")
-    self.code = raw_input("What is the code?")
+      accepted = input("Have you authorized me? (y/n)")
+    self.code = input("What is the code?")
     self.useCode()
 def get_authenticated_service():
   flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
