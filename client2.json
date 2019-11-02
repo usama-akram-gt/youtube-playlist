@@ -1,7 +1,7 @@
 {
     "installed": {
         "redirect_uris": [
-            "http://localhost:8090/authorize","http://localhost:8090/oauth2callback","http://localhost:4000","http://localhost:8080/"
+            "http://localhost:8090/authorize","http://localhost:8090/oauth2callback","http://localhost:4000","http://localhost:8080/","https://rocky-harbor-96109.herokuapp.com/"
         ], 
         "token_uri": "https://accounts.google.com/o/oauth2/token", 
         "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs", 
