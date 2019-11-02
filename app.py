@@ -79,7 +79,7 @@ def automation():
 
 
 scheduler = BackgroundScheduler()
-scheduler.add_job(func=searchVideos, trigger='cron', hour='22', minute='22')
+scheduler.add_job(func=searchVideos, trigger='cron', hour='10', minute='50')
 scheduler.start()
 
 atexit.register(lambda: scheduler.shutdown())
