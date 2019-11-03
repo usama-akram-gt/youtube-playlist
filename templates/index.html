@@ -21,7 +21,7 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
       <p class="lead">Below controls are given through which you can control the paramters which are need to control this application. It automatically creates playlist when time is up and fills that playlist with the videos.</p>
       <p>
         <button id="set_parameters" type="button" class="btn btn-outline-dark my-2">Set Parameters</button>
-        <button id="results_table" type="button" class="btn btn-outline-dark my-2">Fetch Results</button>
+        <button id="results_table" type="button" class="btn btn-outline-dark my-2">API Settings</button>
       </p>
     </div>
 
@@ -95,12 +95,25 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
 
     <div id="table" class="row">
         <div class="py-2 text-center">
-              <p>
-                <button id="search_videos" type="button" class="btn btn-outline-dark my-2">Search Videos</button>
-                <button id="create_playlist" type="button" class="btn btn-outline-dark my-2">Create Playlist</button>
-                <button id="Add_Videos" type="button" class="btn btn-outline-dark my-2">Add Videos</button>
-              </p>
-              <h4 class="mb-3">Table</h4>
+              <table class="table table-borderless"> 
+                <tr><td><a href="/test">Test an API request</a></td> 
+                <td>Submit an API request and see a formatted JSON response.  
+                    Go through the authorization flow if there are no stored  
+                    credentials for the user.</td></tr> 
+                <tr><td><a href="/authorize">Test the auth flow directly</a></td> 
+                <td>Go directly to the authorization flow. If there are stored  
+                    credentials, you still might not be prompted to reauthorize  
+                    the application.</td></tr> 
+                <tr><td><a href="/revoke">Revoke current credentials</a></td> 
+                <td>Revoke the access token associated with the current user  
+                    session. After revoking credentials, if you go to the test  
+                    page, you should see an <code>invalid_grant</code> error. 
+                </td></tr> 
+                <tr><td><a href="/clear">Clear Flask session credentials</a></td> 
+                <td>Clear the access token currently stored in the user session.  
+                    After clearing the token, if you <a href="/test">test the  
+                    API request</a> again, you should go back to the auth flow. 
+                </td></tr></table>
         </div>
     </div>
 
@@ -133,39 +146,6 @@ body,h1,h2,h3,h4,h5,h6 {font-family: "Raleway", sans-serif}
       document.getElementById("table").style.display = "block";
       document.getElementById("main-page").style.display = "none"; 
     } 
-
-    $(function() { 
-      $("#search_videos").click(function (event) {
-         $.getJSON('/searchVideos', { },
-          function(data) 
-          { 
-
-          }); 
-          return false; 
-      }); 
-    });
-
-    $(function() { 
-      $("#create_playlist").click(function (event) {
-         $.getJSON('/createPlaylist', { },
-          function(data) 
-          { 
-
-          }); 
-          return false; 
-      }); 
-    });
-
-    $(function() { 
-      $("#Add_Videos").click(function (event) {
-         $.getJSON('/addVideo', { },
-          function(data) 
-          { 
-
-          }); 
-          return false; 
-      }); 
-    });
         
   </script>
   <script src={{ url_for('static', filename = 'js/bootstrap.bundle.min.js') }}></script>
