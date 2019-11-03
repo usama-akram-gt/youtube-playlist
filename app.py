@@ -85,4 +85,4 @@ scheduler.start()
 atexit.register(lambda: scheduler.shutdown())
 
 if __name__ == '__main__':
-    app.run(host='https://rocky-harbor-96109.herokuapp.com/')
+    app.run(debug=True)

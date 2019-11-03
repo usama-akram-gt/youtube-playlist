@@ -52,7 +52,7 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 YOUTUBE_READ_WRITE_SCOPE = "https://www.googleapis.com/auth/youtube"
 YOUTUBE_API_SERVICE_NAME = "youtube"
 YOUTUBE_API_VERSION = "v3"
-YOUTUBE_REDIRECT_URI = "http://localhost:4000"
+YOUTUBE_REDIRECT_URI = "https://rocky-harbor-96109.herokuapp.com/"
 class Authenticator():
   def __init__(self):
     self.client_id = ''
