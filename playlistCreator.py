@@ -8,12 +8,15 @@ import sys
 
 import httplib2
 import requests as re
+import google.oauth2.credentials
+import google_auth_oauthlib.flow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 #from json2html import *
 from oauth2client.client import flow_from_clientsecrets
 from oauth2client.file import Storage
 from oauth2client.tools import argparser, run_flow
+import flask
 
 DEVELOPER_KEY = "DEVELOPER KEY HERE"
 
@@ -50,9 +53,9 @@ https://developers.google.com/api-client-library/python/guide/aaa_client_secrets
 # This OAuth 2.0 access scope allows for full read/write access to the
 # authenticated user's account.
 YOUTUBE_READ_WRITE_SCOPE = "https://www.googleapis.com/auth/youtube"
-YOUTUBE_API_SERVICE_NAME = "youtube"
-YOUTUBE_API_VERSION = "v3"
-YOUTUBE_REDIRECT_URI = "https://rocky-harbor-96109.herokuapp.com/"
+SCOPES = ['https://www.googleapis.com/auth/youtube.force-ssl']
+API_SERVICE_NAME = 'youtube'
+API_VERSION = 'v3'
 class Authenticator():
   def __init__(self):
     self.client_id = ''
@@ -98,21 +101,18 @@ class Authenticator():
     self.code = input("What is the code?")
     self.useCode()
 def get_authenticated_service():
-  flow = flow_from_clientsecrets(CLIENT_SECRETS_FILE,
-    message=MISSING_CLIENT_SECRETS_MESSAGE,
-    scope=YOUTUBE_READ_WRITE_SCOPE,
-    redirect_uri = YOUTUBE_REDIRECT_URI)
+  '''
+    if 'credentials' not in flask.session:
+      return flask.redirect('authorize')
+    credentials = google.oauth2.credentials.Credentials(
+        **flask.session['credentials'])
+    youtube = googleapiclient.discovery.build(
+        API_SERVICE_NAME, API_VERSION, credentials=credentials)
+    channel = youtube.channels().list(mine=True, part='snippet').execute()
+    flask.session['credentials'] = credentials_to_dict(credentials)
+    return flask.jsonify(**channel)
+    '''
 
-
-  storage = Storage("%s-oauth2.json" % sys.argv[0])
-  credentials = storage.get()
-
-  if credentials is None or credentials.invalid:
-    flags = argparser.parse_args()
-    credentials = run_flow(flow, storage, flags)
-
-  return build(YOUTUBE_API_SERVICE_NAME, YOUTUBE_API_VERSION,
-    http=credentials.authorize(httplib2.Http()))
 def createPlaylist(youtube,title,description,privacyStatus):
   # This code creates a new, private playlist in the authorized user's channel.
   playlists_insert_response = youtube.playlists().insert(
