@@ -124,7 +124,8 @@ def test_api_request():
   # ACTION ITEM: In a production app, you likely want to save these
   #              credentials in a persistent database instead.
   flask.session['credentials'] = credentials_to_dict(credentials)
-  return render_template("index.html")
+  Message = 'hide'
+  return render_template("index.html", message = Message)
 
 
 @app.route('/authorize')
